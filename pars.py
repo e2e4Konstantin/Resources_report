@@ -23,7 +23,7 @@ if __name__ == "__main__":
 
     path, file, sheet = get_source_location(point_number=2, data_file_number=2)
     input_file, output_file = handle_location(data_path=path, data_file=file)
-    print(f"файл с данными: {input_file!r}\nназвание листа: {sheet!r}\nфайл результата: {output_file!r}\n")
+    # print(f"файл с данными: {input_file!r}\nназвание листа: {sheet!r}\nфайл результата: {output_file!r}\n")
 
     write_report_excel(input_file, output_file)
 

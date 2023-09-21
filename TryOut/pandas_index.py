@@ -19,6 +19,8 @@ print(len(df.index))
 print(df.shape[0])
 print(df[df.columns[0]].count())
 
+
+
 #
 #
 # new_index = list(range(1,5))

@@ -17,7 +17,7 @@ def read_data_frame(src_file_name: str, sheet_name: str) -> DataFrame | None:
     """
 
     file_path, file_name = os.path.split(src_file_name)
-    parquet_file = os.path.join(file_path, f"{file_name.split('.')[0]}.gzip")
+    parquet_file = os.path.join(file_path, f"{file_name.split('.')[0]}_{sheet_name}.gzip")
     df = DataFrame()
     if os.path.exists(parquet_file):
         try:
