@@ -3,13 +3,13 @@ import numpy
 from openpyxl.worksheet import worksheet
 from openpyxl.utils.cell import column_index_from_string
 
-from data_frame_features import read_data_frame, info_data_frame
-from file_features.message import output_message
-
-from layout.layout_setting import headers, width_columns, items_styles
+from data_frame_features import SourceData
+from layout.layout_setting import headers, items_styles
 from layout.write_resources_table import write_resources_for_table
-
 from layout.set_cell_style import set_cell_style
+from layout.layout_setting import basic_colors
+
+import time
 
 
 def _attributes_output(src_attributes: str, start_column: int, sheet: worksheet, row: int) -> int:
@@ -58,6 +58,7 @@ def _parameters_output(src_parameters: str, start_column: int, sheet: worksheet,
 def _table_line_output(table_info: numpy.record, sheet: worksheet, row: int) -> int:
     if table_info:
         sheet.cell(row=row, column=column_index_from_string('C')).value = table_info['C']
+
         for column in range(1, len(headers["table"]) + 1):
             sheet.cell(row=row, column=column).font = items_styles['table']['font']
             sheet.cell(row=row, column=column).fill = items_styles['table']['fill']
@@ -66,6 +67,8 @@ def _table_line_output(table_info: numpy.record, sheet: worksheet, row: int) -> 
             sheet.cell(row=row + 1, column=column).font = items_styles['table']['font']
             sheet.cell(row=row + 1, column=column).fill = items_styles['table']['fill']
             sheet.cell(row=row + 1, column=column).border = items_styles['table']['border_down']
+
+        sheet.cell(row=row, column=column_index_from_string('C')).font = basic_colors['grey']
 
         column_h = column_index_from_string('H')
         end_attributes_column = _attributes_output(table_info['G'], start_column=column_h, sheet=sheet, row=row)
@@ -78,28 +81,32 @@ def _table_line_output(table_info: numpy.record, sheet: worksheet, row: int) -> 
     return row
 
 
-def write_tables(input_file_name: str, sheet: worksheet, start_line: int, tables_limit: int = 0):
+def count_resources_for_table(table_code: str, df: DataFrame) -> int:
+    x = df['I'].value_counts().get(table_code, 0)
+    return x
+
+
+
+
+def write_tables(input_file_name: str, output_sheet: worksheet, start_line: int, tables_limit: int = 0):
     """
     Записывает информацию о таблицах.
     :param input_file_name: Имя фала с данными.
-    :param sheet: Лист, на который выводить данные.
+    :param output_sheet: Лист, на который выводить данные.
     :param start_line: Строка с которой надо начинить запись.
     :param tables_limit: Сколько таблиц выводить.
     """
-    tables_sheet_name = 'Tables'
-    table_df: DataFrame = read_data_frame(input_file_name, sheet_name=tables_sheet_name)
-    info_data_frame(table_df, mode='short')
-    print(f"прочитали данные из файла: {input_file_name!r}\nлист: {tables_sheet_name!r}\n")
 
-    if not table_df.empty:
-        if 0 < tables_limit < len(table_df.index):
-            table_df = table_df.loc[:tables_limit]
-        row = start_line
-        for table in table_df.to_records(index=False):
-            row = _table_line_output(table, sheet, row=row)
+    data = SourceData(input_file_name)
+    data.info()
 
-            table_cod = table['C']
-            row = write_resources_for_table(input_file_name, sheet, start_line=row, table_code=table_cod)
-    else:
-        output_message(f"пустой файл: {input_file_name!r}",
-                       f"нет ни одной таблицы на листе {tables_sheet_name!r}.")
+    if 0 < tables_limit < len(data.tables.index):
+        data.tables = data.tables.loc[:tables_limit]
+    row = start_line
+    for table in data.tables.to_records(index=False):
+        start = time.monotonic_ns()
+        amount = count_resources_for_table(table['C'], data.resources)
+        if amount > 0:
+            row = _table_line_output(table, output_sheet, row=row)
+            row = write_resources_for_table(data, output_sheet, row, table)
+        print(f"таблица: {table['C']} ресурсов: {amount} time: {((time.monotonic_ns()-start)/1e9)} sec")

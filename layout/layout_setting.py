@@ -84,6 +84,14 @@ items_styles = {
 
 }
 
+basic_colors = {
+    'grey': Font(name='Calibri', color=Color(rgb='0099A3A4'), size=8, bold=False),
+    'indigo':	Font(name='Calibri', color=Color(rgb='004B0082'), size=8, bold=False),
+    'dark_red':	Font(name='Calibri', color=Color(rgb='008B0000'), size=8, bold=False),
+    'black':	Font(name='Calibri', color=Color(rgb='00000000'), size=8, bold=False),
+    'dark_blue_bold':	Font(name='Calibri', color=Color(rgb='0000008B'), size=8, bold=True),
+}
+
 
 # own_border = Border(left=Side(border_style=None, color='FF000000'),
 #                     right=Side(border_style=None, color='FF000000'),

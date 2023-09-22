@@ -6,7 +6,10 @@ def filter_data_frame(src_df: DataFrame, column_name: str, target: str) -> DataF
     """ Фильтрует данные DataFrame по столбцу column_name на полное соответствие цели target. """
     if not src_df.empty:
         if column_name in src_df.columns:
-            df = src_df[src_df[column_name].str.strip().str.fullmatch(pat=target)]
+            # df = src_df[src_df[column_name].str.strip().str.fullmatch(pat=target)]
+
+            df = src_df.loc[src_df[column_name].isin([target])]
+
             # print(f"цель {target!r} в df: {len(df.to_records(index=False).tolist())} позиций")
             return df
         else:
