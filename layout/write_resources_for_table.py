@@ -1,7 +1,7 @@
-import gc
-import time
-from pandas import DataFrame, isna
+from pandas import isna
 import numpy
+
+from fastnumbers import try_forceint, try_real
 
 from openpyxl.worksheet import worksheet
 from openpyxl.utils.cell import column_index_from_string
@@ -11,15 +11,6 @@ from file_features.message import output_message
 from data_frame_features import filter_data_frame
 from layout.set_cell_style import set_cell_style
 from layout.layout_setting import basic_colors
-
-
-def TimeTakenDecorator(func):
-    def wraper(*args, **kwargs):
-        start = time.monotonic_ns()
-        func(*args, **kwargs)
-        print(f"time: {start - time.monotonic_ns()}")
-
-    return wraper
 
 
 def _resource_line_output(resource_info: numpy.record, sheet: worksheet, row: int,
@@ -33,6 +24,11 @@ def _resource_line_output(resource_info: numpy.record, sheet: worksheet, row: in
             value = "" if isna(value) else value
             sheet.cell(row=row, column=column_index_from_string(columns[i])).value = value
             set_cell_style(sheet, row, column_index_from_string(columns[i]), 'resource')
+
+        stat = try_forceint(resource_info['G'])
+        if isinstance(stat, (int, float)) and stat == 0:
+            stat = ''
+        sheet.cell(row=row, column=column_index_from_string('F')).value = stat
 
         # раскрашиваем
         sheet.cell(row=row, column=column_index_from_string('A')).font = basic_colors['grey']
@@ -64,14 +60,12 @@ def _resource_line_output(resource_info: numpy.record, sheet: worksheet, row: in
                 if option_value:
                     option_value = ["" if isna(value) else value for value in option_value]
                     column = step + i
-                    sheet.cell(row=row, column=start_column + column).value = option_value[0]
-                    sheet.cell(row=row, column=start_column + column + 1).value = option_value[1]
+                    sheet.cell(row=row, column=start_column + column).value = try_real(option_value[0])
+                    sheet.cell(row=row, column=start_column + column + 1).value = try_real(option_value[1])
                     sheet.cell(row=row, column=start_column + column + 2).value = option_value[2]
-                    sheet.cell(row=row, column=start_column + column + 3).value = option_value[3]
-                    sheet.cell(row=row, column=start_column + column + 4).value = option_value[4]
-                    step += 4
-                    # for delta in range(i + step + 1):
-                    #     set_cell_style(sheet, row, start_column_number + delta, 'resource')
+                    sheet.cell(row=row, column=start_column + column + 3).value = try_real(option_value[3])
+                    sheet.cell(row=row, column=start_column + column + 4).value = try_forceint(option_value[4])
+                step += 4
 
         sheet.row_dimensions[row].height = 12
         sheet.row_dimensions[row + 1].height = 12
@@ -83,7 +77,7 @@ def _resource_line_output(resource_info: numpy.record, sheet: worksheet, row: in
 def write_resources_for_table(src_data: SourceData, sheet: worksheet, start_line: int, table: numpy.record) -> int:
     """
     Записывает информацию о ресурсах для указанной таблицы.
-    :param input_file_name: Имя фала с данными.
+    :param src_data: Данные.
     :param sheet: Лист, на который надо выводить данные.
     :param start_line: Строка с которой надо начинить запись.
     :param table: Данные о таблице.

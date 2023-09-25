@@ -7,13 +7,15 @@ side_none = Side(border_style=None)
 
 headers = {
     'main': ['номер', 'место', 'шифр', 'описание', 'измерение', 'статистика', 'флаг', 'атрибуты/параметры', '', ''],
+
+
     'option': ['от', 'до', 'ед.изм.', 'шаг', 'тип',],
     'attribute': ['атрибуты',],
     'table': ['A', 'B', 'C', 'D', 'E', 'F', 'G']
 }
 
 
-width_columns = {'A': 6, 'B': 6, 'C': 10, 'D': 100, 'E': 10, 'F': 10, 'G': 10, 'H': 10, 'I': 10, 'J': 10, 'K': 10, 'L': 10, 'M': 10}
+width_columns = {'A': 6, 'B': 6, 'C': 10, 'D': 100, 'E': 10, 'F': 7, 'G': 10, 'H': 10, 'I': 10, 'J': 10, 'K': 10, 'L': 10, 'M': 10, 'N': 10}
 
 
 items_styles = {
@@ -39,6 +41,8 @@ items_styles = {
                     'fill': PatternFill(patternType="solid", fgColor=Color(rgb='00F3F5EE')),
                     'border': Border(top=Side(border_style='thin', color=Color(rgb='00A0A0A0')), bottom=Side(border_style='thin', color=Color(rgb='00A0A0A0')))
                 },
+
+
                 'attributes_header': {
                     'font': Font(name='Calibri', color=Color(rgb='0034495E'), size=8, bold=False),
                     'fill': PatternFill(patternType="solid", fgColor=Color(rgb='00F7F7F8')),

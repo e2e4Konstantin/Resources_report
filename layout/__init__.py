@@ -1,1 +1,2 @@
-from layout.write_report_excel import write_report_excel
+from layout.write_resources_report_excel import write_resources_report_excel
+

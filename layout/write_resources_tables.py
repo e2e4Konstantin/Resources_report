@@ -5,7 +5,7 @@ from openpyxl.utils.cell import column_index_from_string
 
 from data_frame_features import SourceData
 from layout.layout_setting import headers, items_styles
-from layout.write_resources_table import write_resources_for_table
+from layout.write_resources_for_table import write_resources_for_table
 from layout.set_cell_style import set_cell_style
 from layout.layout_setting import basic_colors
 
@@ -19,6 +19,8 @@ def _attributes_output(src_attributes: str, start_column: int, sheet: worksheet,
             set_cell_style(sheet, row, column, 'attributes_header')
 
         attributes = src_attributes.split(',')
+        attributes = list(map(lambda x: x.strip(), attributes))
+
         attributes_length = len(attributes)
         for i, attribute in enumerate(attributes):
             column = start_column + i
@@ -36,7 +38,7 @@ def _attributes_output(src_attributes: str, start_column: int, sheet: worksheet,
 def _parameters_output(src_parameters: str, start_column: int, sheet: worksheet, row: int):
     if not isna(src_parameters):
         parameters = src_parameters.split(',')
-        # print(parameters)
+        parameters = list(map(lambda x: x.strip(), parameters))
         parameters_length = len(parameters)
         if parameters_length > 0:
             mini_table_header = headers['option']  # таблица: 'от', 'до', 'ед.изм.', 'шаг', 'тип'
@@ -86,9 +88,7 @@ def count_resources_for_table(table_code: str, df: DataFrame) -> int:
     return x
 
 
-
-
-def write_tables(input_file_name: str, output_sheet: worksheet, start_line: int, tables_limit: int = 0):
+def write_resources_tables(input_file_name: str, output_sheet: worksheet, start_line: int, tables_limit: int = 0):
     """
     Записывает информацию о таблицах.
     :param input_file_name: Имя фала с данными.

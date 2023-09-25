@@ -20,9 +20,9 @@ class SourceData:
             output_message_exit(file_message, f"нет ни одной таблицы на листе {self.sheets[0]!r}.")
         if self.resources.empty:
             output_message_exit(file_message, f"нет ресурсов на листе {self.sheets[1]!r}.")
-        if self.resources.empty:
+        if self.attributes.empty:
             output_message_exit(file_message, f"нет атрибутов на листе {self.sheets[2]!r}.")
-        if self.resources.empty:
+        if self.options.empty:
             output_message_exit(file_message, f"нет параметров на листе {self.sheets[3]!r}.")
 
     def info(self):

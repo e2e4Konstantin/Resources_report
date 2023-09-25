@@ -15,3 +15,5 @@ six==1.16.0
 tzdata==2023.3
 xlrd==2.0.1
 XlsxWriter==3.1.4
+
+fastnumbers~=5.0.1
